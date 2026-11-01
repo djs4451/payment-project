@@ -1,0 +1,36 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+
+metadata:
+  name: payment-project
+  namespace: argocd
+
+spec:
+  description: Payment application deployment project
+
+  # Git repositories allowed for this project
+  sourceRepos:
+    - 'https://github.com/djs4451/payment-project.git'
+
+  # Kubernetes destination allowed
+  destinations:
+    - namespace: payment-lab
+      server: https://kubernetes.default.svc
+
+  # Allowed namespaced Kubernetes resources
+  namespaceResourceWhitelist:
+    - group: ""
+      kind: ConfigMap
+    - group: ""
+      kind: Secret
+    - group: ""
+      kind: Service
+    - group: apps
+      kind: Deployment
+    - group: batch
+      kind: Job
+
+  # No cluster-scoped resources allowed
+  clusterResourceWhitelist: []
+

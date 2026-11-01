@@ -1,0 +1,28 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: payment-app
+  namespace: argocd
+
+spec:
+  # Associate with our custom AppProject
+  project: payment-project
+
+  # Git source
+  source:
+    repoURL: https://github.com/djs4451/payment-project.git
+    targetRevision: main
+    path: manifests
+
+  # Kubernetes destination
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: payment-lab
+
+  # Manual synchronization for our learning lab
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=false
+

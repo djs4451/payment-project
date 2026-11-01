@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: payment-postsync-test
+  namespace: payment-lab
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+        - name: smoke-test
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              echo "Starting payment application smoke test"
+
+              wget -qO- http://payment-service.payment-lab.svc.cluster.local \
+                | grep -q "Payment application is running"
+
+              if [ $? -eq 0 ]; then
+                echo "Payment application smoke test PASSED"
+              else
+                echo "Payment application smoke test FAILED"
+                exit 1
+              fi
+      restartPolicy: Never
